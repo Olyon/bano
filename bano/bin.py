@@ -2,9 +2,9 @@ import argparse
 import sys
 
 from .constants import DEPARTEMENTS
-from . import core, core_place, pre_process_suffixe, export, publish
+from . import core, core_place, pre_process_suffixe, export, publish,debug
 from . import update_manager
-from .sources import bal, cadastre_gouv, cadastre_json, ban
+from .sources import bal, cadastre_gouv, cadastre_json, ban,ban2fantoir
 
 
 def main():
@@ -44,6 +44,16 @@ def main():
     group.add_argument("--depts", type=str, help="Départements à traiter (toutes les communes de chaque dept sont traitées une par une)", nargs="*")
     group.add_argument("--France", help="Raccourci pour tous les départements d'un coup", action="store_const", const=DEPARTEMENTS)
     subparser.set_defaults(func=core_place.process)
+
+    subparser = subparsers.add_parser(
+        "ban2fantoir",
+        help="Ajoute dans FANTOIR des libellés BAN", 
+        description="Ajoute dans FANTOIR des libellés BAN"
+    )
+    subparser.add_argument(
+        "--code_insee", type=str, help="Code INSEE de la commune à traiter"
+    )
+    subparser.set_defaults(func=ban2fantoir.process)
 
     subparser = subparsers.add_parser(
         "download_bal",
@@ -111,6 +121,13 @@ def main():
     subparser.set_defaults(func=ban.update_bis_table)
 
     subparser = subparsers.add_parser(
+        "remove_chars_in_ban",
+        help="ménage de caractères parasites dans les noms de voie BAN",
+        description="ménage de caractères parasites dans les noms de voie BAN",
+    )
+    subparser.set_defaults(func=ban.remove_chars_in_ban)
+
+    subparser = subparsers.add_parser(
         "pre_process_suffixe",
         help="Détermine les zones où les noms dans le Cadastre sont suffixés",
         description="Détermine les zones où les noms dans le Cadastre sont suffixés",
@@ -165,6 +182,11 @@ def main():
         description="Détermine les communes mises à jour grace aux tuiles impactées",
     )
     subparser.set_defaults(func=update_manager.update_insee_lists)
+
+    subparser = subparsers.add_parser("debug_sql")
+    subparser.add_argument("source",choices=["OSM", "BAN"],type=str,help="Source des données à traiter",)
+    subparser.add_argument("code_insee", type=str, help="Code INSEE de la commune à traiter")
+    subparser.set_defaults(func=debug.process_sql)
 
     args = parser.parse_args()
 

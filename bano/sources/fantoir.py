@@ -6,15 +6,17 @@ class Mapping:
         self.fantoir = {}
         self.code_fantoir_vers_nom_fantoir = {}
         self.code_fantoir_vers_noms = {}
+        self.code_fantoir9_vers_fantoir10 = {}
 
     def reset(self):
         self.fantoir = {}
         self.code_fantoir_vers_nom_fantoir = {}
         self.code_fantoir_vers_noms = {}
+        self.code_fantoir9_vers_fantoir10 = {}
 
     def load(self,insee):
         str_query = ("""SELECT *
-                        FROM    (SELECT code_insee||id_voie||cle_rivoli,
+                        FROM    (SELECT fantoir10,
                                         nature_voie||' '||libelle_voie,
                                         rank() OVER(PARTITION BY nature_voie||' '||libelle_voie ORDER BY type_voie,id_voie,cle_rivoli) rang
                                 FROM    fantoir_voie
@@ -25,6 +27,8 @@ class Mapping:
             cur_fantoir.execute(str_query)
             for c in cur_fantoir:
                 self.code_fantoir_vers_nom_fantoir[c[0]] = c[1]
+                # Ajout du match sur les FANTOIR sans cle de contrôle pour rapprochement BAN
+                self.code_fantoir9_vers_fantoir10[c[0][0:9]] = c[0]
                 cle = ' '.join(c[1].replace('-',' ').split())
                 cle = normalize(cle)
                 self.fantoir[cle] = c[0]

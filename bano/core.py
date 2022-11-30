@@ -15,7 +15,7 @@ from .models import Adresse, Adresses, Node, Pg_hsnr
 from .outils_de_gestion import batch_start_log
 from .outils_de_gestion import batch_end_log
 # from .outils_de_gestion import age_etape_dept
-from .sources import fantoir
+from .sources import fantoir,ban2fantoir
 
 os.umask(0000)
 
@@ -104,10 +104,17 @@ def has_addreses_with_suffix(insee):
 def load_ban_hsnr(code_insee):
     dict_node_relations = {}
     data = get_data_from_pg_direct('ban_hsnr',code_insee)
-    for id, housenumber, name, lon, lat,cp in data:
+    for id, housenumber, name, lon, lat,cp,fantoir_ban in data:
         if not name or len(name) < 2 or not lon:
             continue
         adresses.register(name)
+        fantoir10 = ''
+        if fantoir_ban:
+            fantoir9 = f"{fantoir_ban[0:5]}{fantoir_ban[6:10]}"
+            if fantoir9 in fantoir.mapping.code_fantoir9_vers_fantoir10:
+                fantoir10 = fantoir.mapping.code_fantoir9_vers_fantoir10[fantoir9]
+                adresses.add_fantoir(hp.normalize(name),fantoir10,'FANTOIR')
+
         if not id in dict_node_relations:
             dict_node_relations[id] = []
             dict_node_relations[id].append(hp.normalize(name))
@@ -284,6 +291,9 @@ def addr_2_db(code_insee, source, **kwargs):
     
     adresses = Adresses(code_insee)
 
+    if source == 'BAN':
+        ban2fantoir.process(code_insee)
+
     fantoir.mapping.reset()
     fantoir.mapping.load(code_insee)
 
@@ -321,7 +331,6 @@ def process(source, code_insee, depts, France, **kwargs):
             liste_codes_insee += dbhp.get_insee_name_list_by_dept(d)
     logfile = log.start_log_to_file(source,'process_commune','00')
     for code_insee, nom in liste_codes_insee:
-        # print(f"{code_insee} - {nom}")
         try:
             addr_2_db(code_insee, source)
         except:

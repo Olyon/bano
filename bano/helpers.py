@@ -18,6 +18,9 @@ def remove_quotes_on_null(s):
 def replace_single_quotes_with_double(s):
     return s.replace('\'','"')
 
+def replace_double_quotes_with_single(s):
+    return s.replace('"',"'")
+
 def format_toponyme(s):
     a_s = s.replace('\'',' ').split(' ')
     
@@ -104,10 +107,12 @@ def normalize(s):
     s = s.upper()                # tout en majuscules
     s = s.split(' (')[0]        # parenthèses : on coupe avant
     s = s.replace('-',' ')        # separateur espace
+    s = s.replace('.',' ')        # separateur espace
     s = s.replace('\'',' ')        # separateur espace
     s = s.replace('’',' ')        # separateur espace
     s = s.replace('/',' ')        # separateur espace
     s = s.replace(':',' ')        # separateur deux points
+    s = s.replace('"','')        # suppression des guillemets
     s = ' '.join(s.split())        # separateur : 1 espace
 
     for l in iter(constants.LETTRE_A_LETTRE):
