@@ -1,11 +1,11 @@
 #!/bin/bash
 
 export BANO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export LOG_DIR=$BANO_DIR/log
+export DATA_DIR=/media/NFS/DD_Data/projets/osm/GitHub/bano_data
+export LOG_DIR=$DATA_DIR/log
 export LOCK_DIR=$BANO_DIR/lock
-export DATA_DIR=/data/project/bano_data
-export DOWNLOAD_DIR=/data/download
-export IMPOSM_CACHE_DIR=/data/bano_imposm_cache
+export DOWNLOAD_DIR=$DATA_DIR/download
+export IMPOSM_CACHE_DIR=$DATA_DIR/bano_imposm_cache
 export BANO_CACHE_DIR=$DATA_DIR/bano_cache
 export BAN_CACHE_DIR=$DATA_DIR/ban_cache
 export CADASTRE_CACHE_DIR=$DATA_DIR/cadastre_cache
@@ -13,16 +13,16 @@ export BAL_CACHE_DIR=$DATA_DIR/bal_cache
 export EXPIRE_TILES_DIR=$DATA_DIR/expire_tiles
 export CSV_DIR=$DATA_DIR/csv_insee
 export COG_DIR=$DATA_DIR/cog
-export EXPORT_SAS_DIR=/data/sas_web
-export EXPORT_WEB_DIR=/data/work/bano.openstreetmap.fr/www/web/data/
-export TMP_DIR=/data/tmp
+export EXPORT_SAS_DIR=$DATA_DIR/sas_web
+export EXPORT_WEB_DIR=$DATA_DIR/work/bano.openstreetmap.fr/www/web/data/
+export TMP_DIR=$DATA_DIR/tmp
 export SCHEMA_CIBLE=public
 export LANG=${LANG:-fr_FR.UTF-8}
 export PARALLEL_JOBS=${PARALLEL_JOBS:-4}
 
 
 POSTGRES_USER=${POSTGRES_USER:-cadastre}
-POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-ololol}
 POSTGRES_HOST=${POSTGRES_HOST:-localhost}
 POSTGRES_PORT=${POSTGRES_PORT:-5432}
 
